@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>_____NEVER_ENDING_____ | Preview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --pink: #E040FB;
+    --bg: #000;
+    --surface: #0a0a0a;
+    --border: #1c1c1c;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: #fff; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: var(--pink); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid #111;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .logo { font-weight: 900; font-size: 12px; letter-spacing: 0.25em; text-decoration: none; }
+  .logo .pink { color: var(--pink); }
+  .logo .dim { color: #333; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a { color: #555; text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: 0.25em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--pink); }
+  .cart-icon { display: flex; align-items: center; gap: 6px; color: #fff; text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 24px; overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(224,64,251,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(224,64,251,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(224,64,251,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .hero-logo { position: relative; margin-bottom: 32px; }
+  .hero h1 {
+    position: relative;
+    font-size: clamp(48px, 10vw, 110px);
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .hero h1 .pink { color: var(--pink); display: block; }
+  .hero-sub { color: #444; font-size: 10px; letter-spacing: 0.5em; margin-bottom: 40px; position: relative; }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; }
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 40px; background: var(--pink); color: #000;
+    font-size: 11px; font-weight: 900; letter-spacing: 0.2em;
+    text-decoration: none; transition: filter 0.2s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-outline {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 15px 40px; background: transparent; color: #555;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+    text-decoration: none; border: 1px solid #222; transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: #fff; color: #fff; }
+  .scroll-cue {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: #222;
+  }
+  .scroll-cue span { font-size: 8px; letter-spacing: 0.5em; font-weight: 700; }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, #222, transparent); }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    overflow: hidden; padding: 12px 0;
+    border-top: 1px solid #111; border-bottom: 1px solid #111;
+  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-track {
+    display: flex; white-space: nowrap;
+    animation: marquee 25s linear infinite;
+  }
+  .marquee-item {
+    display: inline-flex; align-items: center;
+    font-size: 10px; font-weight: 900; letter-spacing: 0.3em; color: #1e1e1e;
+  }
+  .marquee-item .dot { color: var(--pink); padding: 0 24px; }
+
+  /* SECTION */
+  .section { max-width: 1100px; margin: 0 auto; padding: 80px 32px; }
+  .section-label { font-size: 10px; font-weight: 900; letter-spacing: 0.4em; color: var(--pink); margin-bottom: 10px; }
+  .section-title { font-size: clamp(28px, 4vw, 40px); font-weight: 900; letter-spacing: 0.05em; }
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; }
+  .view-all { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; color: #444; text-decoration: none; }
+  .view-all:hover { color: #fff; }
+
+  /* PRODUCT GRID */
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #1c1c1c; }
+  .product-card { background: #000; text-decoration: none; color: #fff; display: block; transition: border-color 0.3s; border: 1px solid #1c1c1c; }
+  .product-card:hover { border-color: var(--pink); }
+  .product-img {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .product-img svg { transition: transform 0.5s ease; }
+  .product-card:hover .product-img svg { transform: scale(1.06); }
+  .product-info { padding: 16px; border-top: 1px solid #1c1c1c; }
+  .product-cat { font-size: 9px; font-weight: 700; letter-spacing: 0.25em; color: #444; margin-bottom: 4px; }
+  .product-name { font-size: 13px; font-weight: 900; letter-spacing: 0.04em; margin-bottom: 2px; }
+  .product-name-ja { font-size: 11px; color: #555; margin-bottom: 10px; }
+  .product-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-size: 13px; font-weight: 900; color: var(--pink); }
+  .product-colors { display: flex; gap: 6px; }
+  .color-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .tag {
+    position: absolute; top: 12px; left: 12px; z-index: 2;
+    padding: 3px 8px; font-size: 8px; font-weight: 900; letter-spacing: 0.15em;
+    background: var(--pink); color: #000;
+  }
+
+  /* BRAND STATEMENT */
+  .statement {
+    position: relative;
+    padding: 120px 32px; text-align: center;
+    background: #050505;
+    border-top: 1px solid #111;
+    overflow: hidden;
+  }
+  .statement-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(224,64,251,0.06) 0%, transparent 60%);
+  }
+  .statement blockquote {
+    font-size: clamp(40px, 7vw, 80px);
+    font-weight: 900; letter-spacing: 0.05em;
+    position: relative;
+  }
+  .statement-sub {
+    font-size: clamp(12px, 2vw, 18px);
+    font-weight: 900; letter-spacing: 0.25em;
+    color: #2a2a2a; margin-top: 12px; position: relative;
+  }
+  .statement p { font-size: 13px; color: #444; line-height: 2.2; max-width: 500px; margin: 32px auto 0; position: relative; }
+
+  /* IG */
+  .ig-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: #111; }
+  .ig-cell { aspect-ratio: 1; background: #0a0a0a; display: flex; align-items: center; justify-content: center; }
+  .ig-cell:nth-child(even) { background: #060606; }
+  .ig-cell span { color: #151515; font-size: 16px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid #111; padding: 48px 32px;
+    margin-top: 80px;
+  }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+  .footer-brand-name { font-weight: 900; font-size: 12px; letter-spacing: 0.2em; margin-bottom: 12px; }
+  .footer-tagline { font-size: 11px; color: #444; line-height: 2; }
+  .footer-label { font-size: 10px; font-weight: 700; letter-spacing: 0.3em; color: #333; margin-bottom: 16px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 8px; }
+  .footer-links a { font-size: 11px; letter-spacing: 0.2em; color: #444; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+  .footer-links a:hover { color: #fff; }
+  .footer-ig { font-size: 11px; color: #444; letter-spacing: 0.05em; }
+  .footer-copy { font-size: 10px; color: #222; margin-top: 20px; }
+
+  /* PAGE DIVIDER */
+  .nav-pill {
+    display: flex; gap: 8px; justify-content: center;
+    padding: 24px; background: #050505;
+    border-bottom: 1px solid #111;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+  }
+  .nav-pill a {
+    color: #333; text-decoration: none; padding: 6px 16px;
+    border: 1px solid #1c1c1c; transition: all 0.2s;
+  }
+  .nav-pill a:hover { color: var(--pink); border-color: var(--pink); }
+
+  @media (max-width: 768px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+    .ig-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-inner { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 480px) {
+    .product-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="logo">
+    <span class="dim">_____</span><span class="pink">NEVER</span><span class="dim">_</span><span class="pink">ENDING</span><span class="dim">_____</span>
+  </a>
+  <div class="nav-links">
+    <a href="#shop">SHOP</a>
+    <a href="#about">ABOUT</a>
+    <a href="#cart" class="cart-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      CART
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-logo">
+    <svg viewBox="0 0 500 220" width="220" height="97" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M80 150 C55 105,75 60,120 72 C95 48,130 25,165 52 C188 30,235 36,245 70 C295 45,360 52,390 82 C420 100,435 130,408 142 C372 158,315 130,290 118 C268 140,244 162,220 140 C196 162,170 172,148 150 C125 170,95 185,80 150 Z" fill="#E040FB" opacity="0.95"/>
+      <path d="M408 82 C432 70,462 75,468 98 C445 92,418 104,408 106 Z" fill="#E040FB"/>
+      <path d="M80 150 C60 168,38 180,26 168 C44 160,70 155,80 150 Z" fill="#E040FB"/>
+    </svg>
+  </div>
+
+  <h1>NEVER<span class="pink">ENDING</span></h1>
+  <p class="hero-sub">終わらない夢をストリートに</p>
+  <div class="hero-btns">
+    <a href="#shop" class="btn-primary">SHOP NOW</a>
+    <a href="#about" class="btn-outline">OUR STORY</a>
+  </div>
+
+  <div class="scroll-cue">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+    <span class="marquee-item">NEVER ENDING<span class="dot">✦</span>終わらない夢<span class="dot">✦</span>STREET APPAREL<span class="dot">✦</span></span>
+  </div>
+</div>
+
+<!-- SHOP -->
+<section class="section" id="shop">
+  <div class="section-header">
+    <div>
+      <p class="section-label">FEATURED</p>
+      <h2 class="section-title">NEW ARRIVALS</h2>
+    </div>
+    <a href="#shop" class="view-all">VIEW ALL →</a>
+  </div>
+
+  <div class="product-grid">
+
+    <!-- Card 1 -->
+    <a href="#" class="product-card">
+      <div class="product-img" style="background:#0d0d0d;">
+        <span class="tag">BESTSELLER</span>
+        <svg viewBox="0 0 160 200" width="130" height="165" fill="none">
+          <path d="M45 38 C45 38,65 30,80 30 C95 30,115 38,115 38 L135 75 L110 82 L110 170 L50 170 L50 82 L25 75 Z" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1.5"/>
+          <path d="M63 30 C63 30,70 44,80 44 C90 44,97 30,97 30" fill="#151515" stroke="#2e2e2e" stroke-width="1.5"/>
+          <text x="66" y="115" fill="#E040FB" font-size="16" font-weight="900" font-family="monospace" opacity="0.9">NE</text>
+          <line x1="50" y1="140" x2="110" y2="140" stroke="#222" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <p class="product-cat">HOODIE</p>
+        <p class="product-name">NE GRAFFITI HOODIE</p>
+        <p class="product-name-ja">グラフィティフーディー</p>
+        <div class="product-bottom">
+          <span class="product-price">¥18,000</span>
+          <div class="product-colors">
+            <div class="color-dot" style="background:#1a1a1a;border:1px solid #333;"></div>
+            <div class="color-dot" style="background:#e8dcc8;"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Card 2 -->
+    <a href="#" class="product-card">
+      <div class="product-img" style="background:#0a0a0a;">
+        <span class="tag" style="background:#fff;">LIMITED</span>
+        <svg viewBox="0 0 160 200" width="130" height="165" fill="none">
+          <path d="M45 38 C45 38,65 30,80 30 C95 30,115 38,115 38 L135 75 L110 82 L110 170 L50 170 L50 82 L25 75 Z" fill="#151515" stroke="#2e2e2e" stroke-width="1.5"/>
+          <path d="M63 30 C63 30,70 44,80 44 C90 44,97 30,97 30" fill="#111" stroke="#2e2e2e" stroke-width="1.5"/>
+          <!-- Bird logo on hoodie -->
+          <path d="M52 95 C47 85,50 74,57 76 C54 71,57 66,61 70 C64 64,70 65,71 72 C78 67,88 68,91 77 C96 81,97 87,93 89 C87 92,79 85,75 82 C72 87,69 91,65 87 C62 91,58 93,55 89 C52 93,49 96,52 95 Z" fill="#E040FB" opacity="0.9" transform="scale(0.85) translate(10,12)"/>
+          <line x1="50" y1="140" x2="110" y2="140" stroke="#222" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <p class="product-cat">HOODIE</p>
+        <p class="product-name">NE BIRD HOODIE</p>
+        <p class="product-name-ja">バードフーディー</p>
+        <div class="product-bottom">
+          <span class="product-price">¥19,500</span>
+          <div class="product-colors">
+            <div class="color-dot" style="background:#1a1a1a;border:1px solid #333;"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Card 3 -->
+    <a href="#" class="product-card">
+      <div class="product-img" style="background:#0d0d0d;">
+        <span class="tag">NEW</span>
+        <svg viewBox="0 0 160 200" width="130" height="165" fill="none">
+          <path d="M45 38 C45 38,65 30,80 30 C95 30,115 38,115 38 L135 75 L110 82 L110 170 L50 170 L50 82 L25 75 Z" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1.5"/>
+          <path d="M63 30 C63 30,70 44,80 44 C90 44,97 30,97 30" fill="#151515" stroke="#2e2e2e" stroke-width="1.5"/>
+          <text x="62" y="110" fill="#E040FB" font-size="10" font-weight="900" font-family="monospace" opacity="0.7">NE</text>
+          <line x1="50" y1="140" x2="110" y2="140" stroke="#222" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <p class="product-cat">HOODIE</p>
+        <p class="product-name">NE SMALL LOGO HOODIE</p>
+        <p class="product-name-ja">スモールロゴフーディー</p>
+        <div class="product-bottom">
+          <span class="product-price">¥16,000</span>
+          <div class="product-colors">
+            <div class="color-dot" style="background:#1a1a1a;border:1px solid #333;"></div>
+            <div class="color-dot" style="background:#e8dcc8;"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- BRAND STATEMENT -->
+<section class="statement" id="about">
+  <div class="statement-glow"></div>
+  <p style="font-size:10px;font-weight:900;letter-spacing:0.5em;color:#333;margin-bottom:32px;position:relative;">— OUR ETHOS —</p>
+  <blockquote>"終わらない夢"</blockquote>
+  <p class="statement-sub">THE DREAM THAT NEVER ENDS</p>
+  <p>
+    私たちは「終わらない夢」をストリートという世界観に落とし込んだブランドです。<br>
+    夢を持ち続けること、諦めないこと。<br>
+    そのエネルギーをすべてのピースに込めています。
+  </p>
+  <br><br>
+  <a href="#shop" class="btn-outline" style="position:relative;">READ MORE</a>
+</section>
+
+<!-- IG -->
+<section class="section">
+  <div class="section-header">
+    <div>
+      <p class="section-label">INSTAGRAM</p>
+      <h2 class="section-title" style="font-size:20px;">@_____never_ending_____</h2>
+    </div>
+    <a href="https://www.instagram.com/_____never_ending_____/" target="_blank" class="view-all">FOLLOW →</a>
+  </div>
+  <div class="ig-grid">
+    <div class="ig-cell"><span>✦</span></div>
+    <div class="ig-cell"><span>✦</span></div>
+    <div class="ig-cell"><span>✦</span></div>
+    <div class="ig-cell"><span>✦</span></div>
+    <div class="ig-cell"><span>✦</span></div>
+    <div class="ig-cell"><span>✦</span></div>
+  </div>
+  <p style="margin-top:16px;text-align:center;font-size:10px;color:#2a2a2a;letter-spacing:0.25em;">FOLLOW US ON INSTAGRAM TO SEE THE LATEST</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <p class="footer-brand-name"><span style="color:var(--pink)">NEVER</span><span style="color:#333">_</span><span style="color:var(--pink)">ENDING</span></p>
+      <p class="footer-tagline">終わらない夢をストリートという<br>世界観に落とし込んだブランド。</p>
+    </div>
+    <div>
+      <p class="footer-label">NAVIGATE</p>
+      <ul class="footer-links">
+        <li><a href="#shop">SHOP</a></li>
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#cart">CART</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-label">FOLLOW</p>
+      <p class="footer-ig">@_____never_ending_____</p>
+      <p class="footer-copy">© 2026 NEVER ENDING. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
