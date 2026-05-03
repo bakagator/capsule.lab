@@ -1,19 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
-import { CartProvider } from "@/lib/CartContext";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "_____NEVER_ENDING_____ | 終わらない夢",
-  description:
-    "Street apparel brand rooted in the dream that never ends. 終わらない夢をストリートに。",
-  keywords: ["streetwear", "never ending", "apparel", "hoodie", "japan"],
-  openGraph: {
-    title: "_____NEVER_ENDING_____",
-    description: "終わらない夢をストリートに。",
-    type: "website",
-  },
+  title: "まつだ家",
+  description: "まつだ家のふたりのスペース",
 };
 
 export default function RootLayout({
@@ -24,11 +15,8 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="min-h-screen flex flex-col">
-        <CartProvider>
-          <Nav />
-          <main className="flex-1 pt-16">{children}</main>
-          <Footer />
-        </CartProvider>
+        <Header />
+        <main className="flex-1 pt-16">{children}</main>
       </body>
     </html>
   );
