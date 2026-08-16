@@ -12,15 +12,27 @@ export default function NewsPanel({
   const [loading, setLoading] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [feedWarning, setFeedWarning] = useState<string | null>(null);
 
   async function loadNews() {
     setLoading(true);
     setError(null);
+    setFeedWarning(null);
     try {
       const res = await fetch("/api/ingest");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "取得失敗");
       setNews(data.news);
+      const errs: { source: string }[] = data.errors ?? [];
+      if (data.news.length === 0 && errs.length > 0) {
+        setFeedWarning(
+          `RSSを取得できませんでした（${errs
+            .map((e) => e.source)
+            .join(
+              "・"
+            )}）。ネットワーク制限の可能性があります。ローカル環境では取得できます。`
+        );
+      }
     } catch (e) {
       setError(String(e));
     } finally {
@@ -66,7 +78,13 @@ export default function NewsPanel({
         </p>
       )}
 
-      {news.length === 0 && !loading && (
+      {feedWarning && (
+        <p className="mb-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+          {feedWarning}
+        </p>
+      )}
+
+      {news.length === 0 && !loading && !feedWarning && (
         <p className="text-sm text-black/50 dark:text-white/50">
           「RSSを取得」を押すと最新ニュースが並びます。
         </p>

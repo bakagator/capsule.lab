@@ -26,8 +26,14 @@ function stripHtml(s: string): string {
     .trim();
 }
 
-// 全フィードから記事を取得。失敗したフィードはスキップして続行。
-export async function fetchNews(limitPerFeed = 8): Promise<NewsItem[]> {
+export type FetchNewsResult = {
+  items: NewsItem[];
+  // 取得に失敗したフィード（source名）と理由
+  errors: { source: string; message: string }[];
+};
+
+// 全フィードから記事を取得。失敗したフィードはスキップし、理由を返す。
+export async function fetchNews(limitPerFeed = 8): Promise<FetchNewsResult> {
   const results = await Promise.allSettled(
     FEEDS.map(async (feed) => {
       const parsed = await parser.parseURL(feed.url);
@@ -46,12 +52,17 @@ export async function fetchNews(limitPerFeed = 8): Promise<NewsItem[]> {
   );
 
   const items: NewsItem[] = [];
-  for (const r of results) {
-    if (r.status === "fulfilled") items.push(...r.value);
-  }
+  const errors: { source: string; message: string }[] = [];
+  results.forEach((r, i) => {
+    if (r.status === "fulfilled") {
+      items.push(...r.value);
+    } else {
+      errors.push({ source: FEEDS[i].source, message: String(r.reason) });
+    }
+  });
   // 新しい順
   items.sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
-  return items;
+  return { items, errors };
 }
