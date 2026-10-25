@@ -10,7 +10,7 @@ export default function CodexPanel({ save, onClose }: { save: SaveData; onClose:
   const entries = Object.values(CODEX);
   return (
     <div
-      className="fixed inset-0 z-[60] overflow-y-auto px-4 py-20"
+      className="rpg-overlay fixed inset-0 z-[60] overflow-y-auto px-4 py-20"
       style={{ background: "rgba(15,17,35,0.6)" }}
       onClick={onClose}
     >

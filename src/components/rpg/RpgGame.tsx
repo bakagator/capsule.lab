@@ -149,7 +149,7 @@ export default function RpgGame() {
 
   if (!save) {
     return (
-      <div className="rpg mx-auto max-w-2xl px-4 py-6">
+      <div className="rpg rpg-shell mx-auto max-w-2xl px-4 py-6">
         <TitleScreen onStart={setSave} />
       </div>
     );
@@ -236,13 +236,13 @@ export default function RpgGame() {
   }
 
   return (
-    <div className="rpg mx-auto flex max-w-2xl flex-col gap-4 px-4 py-6">
+    <div className="rpg rpg-shell mx-auto flex max-w-2xl flex-col gap-4 px-4 py-6">
       <StatusBar save={save} onCodex={() => setShowCodex(true)} onTitle={() => setSave(null)} />
       <div key={save.step}>{scene}</div>
       {showCodex && <CodexPanel save={save} onClose={() => setShowCodex(false)} />}
       {toast && (
         <div
-          className="pop-in fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-bold shadow-lg"
+          className="rpg-toast pop-in fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-bold shadow-lg"
           style={{ background: "var(--rpg-gold)", color: "#1f2442" }}
         >
           {toast}

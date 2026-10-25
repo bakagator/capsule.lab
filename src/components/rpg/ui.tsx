@@ -36,7 +36,7 @@ export function GameButton({
   return (
     <button
       {...props}
-      className={`rounded-lg px-4 py-2.5 text-left font-bold transition-opacity enabled:hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
+      className={`rounded-lg px-4 py-2.5 ${className.includes("text-center") ? "" : "text-left"} font-bold transition-opacity enabled:hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
       style={{ fontSize: "15px", ...styles, ...props.style }}
     >
       {children}
