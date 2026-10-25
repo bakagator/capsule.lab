@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 独立アプリ（独自の設定で lint する）
+    "papa-quest/**",
   ]),
 ]);
 
