@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { LEVEL_TITLES, XP_PER_LEVEL } from "./data";
+import { LOG_XP_PER_DAY, today, trustPoints, trustRank, type LogEntry, type Wish } from "./life";
 
 const STORAGE_KEY = "papa_quest";
 
@@ -14,9 +15,13 @@ export type Progress = {
   name: string;
   // 現在のHP（null は満タン）
   hp: number | null;
+  // きずなの泉の日記
+  logs: LogEntry[];
+  // やりたいことリスト
+  wishes: Wish[];
 };
 
-const EMPTY: Progress = { xp: 0, earned: {}, missions: {}, name: "", hp: null };
+const EMPTY: Progress = { xp: 0, earned: {}, missions: {}, name: "", hp: null, logs: [], wishes: [] };
 
 export function levelInfo(xp: number) {
   const maxLevel = LEVEL_TITLES.length;
@@ -30,8 +35,18 @@ export function maxHp(level: number) {
   return 40 + level * 10;
 }
 
+export function trustOf(p: Progress) {
+  const points = trustPoints(p.logs, p.wishes, p.earned["care-clear"] !== undefined);
+  return { points, ...trustRank(points) };
+}
+
+// 最大HPはレベル＋ママの信頼度ボーナス
+export function hpMax(p: Progress) {
+  return maxHp(levelInfo(p.xp).level) + trustOf(p).hpBonus;
+}
+
 export function currentHp(p: Progress) {
-  const max = maxHp(levelInfo(p.xp).level);
+  const max = hpMax(p);
   return p.hp === null ? max : Math.min(p.hp, max);
 }
 
@@ -143,7 +158,65 @@ export function useProgress() {
 
   const dismissToast = useCallback(() => setToast(null), []);
 
-  return { progress, loaded, toast, dismissToast, award, damage, heal, setName, toggleMission, reset };
+  const newId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+  const addLog = useCallback(
+    (cat: string, text: string) => {
+      const date = today();
+      const n = read().logs.filter((l) => l.date === date).length;
+      save((p) => ({ ...p, logs: [{ id: newId(), date, cat, text: text.trim() }, ...p.logs] }));
+      // 1日 LOG_XP_PER_DAY 件までは経験値も入る
+      if (n < LOG_XP_PER_DAY) award(`log-${date}-${n}`, 10);
+      return n < LOG_XP_PER_DAY;
+    },
+    [save, award]
+  );
+
+  const deleteLog = useCallback(
+    (id: string) => save((p) => ({ ...p, logs: p.logs.filter((l) => l.id !== id) })),
+    [save]
+  );
+
+  const addWish = useCallback(
+    (text: string) => save((p) => ({ ...p, wishes: [...p.wishes, { id: newId(), text: text.trim(), done: false }] })),
+    [save]
+  );
+
+  const toggleWish = useCallback(
+    (id: string) => {
+      const w = read().wishes.find((x) => x.id === id);
+      if (!w) return;
+      save((p) => ({
+        ...p,
+        wishes: p.wishes.map((x) => (x.id === id ? { ...x, done: !x.done, doneAt: !x.done ? today() : undefined } : x)),
+      }));
+      if (!w.done) award(`wish-${id}`, 15);
+    },
+    [save, award]
+  );
+
+  const deleteWish = useCallback(
+    (id: string) => save((p) => ({ ...p, wishes: p.wishes.filter((w) => w.id !== id) })),
+    [save]
+  );
+
+  return {
+    progress,
+    loaded,
+    toast,
+    dismissToast,
+    award,
+    damage,
+    heal,
+    setName,
+    toggleMission,
+    reset,
+    addLog,
+    deleteLog,
+    addWish,
+    toggleWish,
+    deleteWish,
+  };
 }
 
 export type ProgressApi = ReturnType<typeof useProgress>;

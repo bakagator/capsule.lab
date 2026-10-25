@@ -2,14 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LESSONS, LEVEL_TITLES, MONTHS, XP_PER_LEVEL } from "@/lib/papa/data";
+import { PROCEDURES } from "@/lib/papa/life";
 import { PLACES, equipment, lessonsCleared, monthsCleared, stats, treasures, type Place } from "@/lib/papa/rpg";
 import { play, setSound, useSound } from "@/lib/papa/sfx";
-import { currentHp, levelInfo, maxHp, useProgress, type ProgressApi } from "@/lib/papa/useProgress";
+import { currentHp, hpMax, levelInfo, trustOf, useProgress, type ProgressApi } from "@/lib/papa/useProgress";
 import BurpGame from "./BurpGame";
 import CareQuest from "./CareQuest";
 import ClassQuest from "./ClassQuest";
 import MilkGame from "./MilkGame";
 import MonthMap from "./MonthMap";
+import Spring from "./Spring";
+import Tower from "./Tower";
+import Town from "./Town";
 import { Btn, Cmd, Gauge, HpGauge, Message, TopBar, Win } from "./ui";
 
 type Screen = "title" | "map" | Place["id"];
@@ -29,13 +33,13 @@ export default function PapaQuest() {
   return (
     <div className="max-w-lg mx-auto py-5">
       {toast && !toast.levelUp && (
-        <div className="fixed left-0 right-0 z-50 flex justify-center pointer-events-none" style={{ top: "calc(12px + env(safe-area-inset-top, 0px))" }}>
+        <div className="fixed left-0 right-0 z-50 flex justify-center pointer-events-none" style={{ bottom: "calc(16px + env(safe-area-inset-bottom, 0px))" }}>
           <div key={toast.text} className="win pop-in text-sm" style={{ padding: "8px 16px", color: "var(--gold)" }}>
             {toast.text}
           </div>
         </div>
       )}
-      {toast?.levelUp && <LevelUp level={toast.level} onClose={api.dismissToast} />}
+      {toast?.levelUp && <LevelUp level={toast.level} hp={hpMax(api.progress)} onClose={api.dismissToast} />}
 
       {!loaded ? null : screen === "title" ? (
         <Title api={api} onStart={() => setScreen("map")} />
@@ -58,6 +62,12 @@ export default function PapaQuest() {
         <ClassQuest api={api} onBack={back} />
       ) : screen === "cave" ? (
         <BurpGame api={api} onBack={back} />
+      ) : screen === "town" ? (
+        <Town api={api} onBack={back} />
+      ) : screen === "spring" ? (
+        <Spring api={api} onBack={back} />
+      ) : screen === "tower" ? (
+        <Tower api={api} onBack={back} />
       ) : (
         <MilkGame api={api} onBack={back} />
       )}
@@ -65,7 +75,7 @@ export default function PapaQuest() {
   );
 }
 
-function LevelUp({ level, onClose }: { level: number; onClose: () => void }) {
+function LevelUp({ level, hp, onClose }: { level: number; hp: number; onClose: () => void }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
@@ -80,7 +90,7 @@ function LevelUp({ level, onClose }: { level: number; onClose: () => void }) {
           Lv {level}「{LEVEL_TITLES[level - 1]}」に なった！
         </p>
         <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--text-muted)" }}>
-          さいだいHPが {maxHp(level)} に ふえた。
+          さいだいHPが {hp} に ふえた。
           <br />
           HPが ぜんかいふく した！
         </p>
@@ -222,6 +232,19 @@ function placeStatus(id: Place["id"], api: ProgressApi): { text: string; done: b
       const d = has("milk-clear") || has("milk-perfect");
       return { text: d ? "★" : "", done: d };
     }
+    case "town": {
+      const n = PROCEDURES.filter((p) => api.progress.missions[p.id]).length;
+      const d = n === PROCEDURES.length && has("bag-clear") && has("vac-clear");
+      return { text: d ? "★" : "", done: d };
+    }
+    case "spring": {
+      const t = trustOf(api.progress);
+      return { text: `♥${t.points}`, done: t.next === null };
+    }
+    case "tower": {
+      const w = api.progress.wishes;
+      return { text: w.length ? `${w.filter((x) => x.done).length}/${w.length}` : "", done: w.length > 0 && w.every((x) => x.done) };
+    }
     default:
       return { text: "", done: false };
   }
@@ -229,9 +252,15 @@ function placeStatus(id: Place["id"], api: ProgressApi): { text: string; done: b
 
 // マップ上の飾り
 const DECOR: { s: string; x: number; y: number; size?: number }[] = [
-  { s: "🌲", x: 6, y: 8 }, { s: "🌲", x: 12, y: 14 }, { s: "🌲", x: 40, y: 10 }, { s: "⛰️", x: 50, y: 6, size: 30 },
-  { s: "⛰️", x: 90, y: 34, size: 30 }, { s: "🌲", x: 92, y: 46 }, { s: "🌳", x: 8, y: 50 }, { s: "🌲", x: 30, y: 62 },
-  { s: "🌳", x: 66, y: 80 }, { s: "🌲", x: 92, y: 86 }, { s: "🌼", x: 34, y: 44 }, { s: "🌼", x: 64, y: 40 },
+  { s: "🌲", x: 6, y: 6 }, { s: "🌲", x: 28, y: 5 }, { s: "⛰️", x: 62, y: 5, size: 30 }, { s: "⛰️", x: 94, y: 28, size: 30 },
+  { s: "🌲", x: 94, y: 52 }, { s: "🌳", x: 6, y: 44 }, { s: "🌲", x: 36, y: 70 }, { s: "🌳", x: 74, y: 80 },
+  { s: "🌲", x: 92, y: 92 }, { s: "🌼", x: 32, y: 38 }, { s: "🌼", x: 62, y: 60 }, { s: "🌲", x: 30, y: 94 },
+];
+
+// 道でつなぐ場所の組
+const PATHS: [Place["id"], Place["id"]][] = [
+  ["home", "town"], ["town", "road"], ["town", "temple"], ["road", "tower"], ["tower", "castle"],
+  ["road", "spring"], ["road", "cave"], ["road", "workshop"], ["home", "workshop"],
 ];
 
 function WorldMap({
@@ -245,7 +274,8 @@ function WorldMap({
 }) {
   const { progress } = api;
   const info = levelInfo(progress.xp);
-  const hpMax = maxHp(info.level);
+  const hpMaxValue = hpMax(progress);
+  const trust = trustOf(progress);
   const [at, setAt] = useState<Place["id"]>(start);
   const [walking, setWalking] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -281,7 +311,7 @@ function WorldMap({
             Lv {info.level}
           </span>
         </div>
-        <HpGauge hp={currentHp(progress)} max={hpMax} />
+        <HpGauge hp={currentHp(progress)} max={hpMaxValue} />
         <div className="flex items-center gap-2 text-xs mt-1.5 tabular-nums">
           <span style={{ color: "var(--text-muted)" }}>EX</span>
           <div className="flex-1">
@@ -291,6 +321,14 @@ function WorldMap({
             {info.isMax ? "MAX" : `あと${XP_PER_LEVEL - info.into}`}
           </span>
         </div>
+        <div className="flex items-center justify-between text-xs mt-1.5">
+          <span>
+            <span style={{ color: "var(--wife)" }}>♥</span> ママの しんらい：{trust.name}
+          </span>
+          <span className="tabular-nums" style={{ color: "var(--text-muted)" }}>
+            {trust.points}pt
+          </span>
+        </div>
       </Win>
 
       <div
@@ -298,16 +336,15 @@ function WorldMap({
         style={{ aspectRatio: "3 / 4", maxWidth: "100%", border: "3px solid var(--frame)" }}
       >
         {/* 湖と道 */}
-        <div className="absolute" style={{ left: "58%", top: "30%", width: "30%", height: "18%", background: "var(--water)", borderRadius: "40% 50% 45% 55%", opacity: 0.9 }} />
+        <div className="absolute" style={{ left: "62%", top: "31%", width: "30%", height: "17%", background: "var(--water)", borderRadius: "40% 50% 45% 55%", opacity: 0.9 }} />
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <polyline
-            points={`${PLACES.find((p) => p.id === "home")!.x},${PLACES.find((p) => p.id === "home")!.y} 22,30 50,52 72,16 50,52 80,64 50,52 46,86`}
-            fill="none"
-            stroke="var(--path)"
-            strokeWidth="2.4"
-            strokeLinejoin="round"
-            opacity="0.85"
-          />
+          {PATHS.map(([a, b]) => {
+            const pa = PLACES.find((p) => p.id === a)!;
+            const pb = PLACES.find((p) => p.id === b)!;
+            return (
+              <line key={`${a}-${b}`} x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y} stroke="var(--path)" strokeWidth="2.4" strokeLinecap="round" opacity="0.85" />
+            );
+          })}
         </svg>
         {DECOR.map((d, i) => (
           <span
@@ -392,11 +429,12 @@ function Home({ api, onBack, onTitle }: { api: ProgressApi; onBack: () => void; 
   const { progress } = api;
   const info = levelInfo(progress.xp);
   const hp = currentHp(progress);
-  const hpMax = maxHp(info.level);
+  const hpMaxValue = hpMax(progress);
+  const trust = trustOf(progress);
   const [rested, setRested] = useState(0);
   const [confirmReset, setConfirmReset] = useState(false);
   const gear = equipment(progress.earned);
-  const items = treasures(progress.earned);
+  const items = treasures(progress.earned, trust.rank, progress.wishes.filter((w) => w.done).length);
 
   return (
     <div>
@@ -424,13 +462,13 @@ function Home({ api, onBack, onTitle }: { api: ProgressApi; onBack: () => void; 
               </div>
             </div>
           </div>
-          <HpGauge hp={hp} max={hpMax} />
+          <HpGauge hp={hp} max={hpMaxValue} />
           <div className="text-xs mt-1 tabular-nums" style={{ color: "var(--text-muted)" }}>
             けいけんち {progress.xp}
             {!info.isMax && `（つぎの レベルまで ${XP_PER_LEVEL - info.into}）`}
           </div>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-3 text-sm tabular-nums">
-            {stats(progress.earned, progress.missions).map((s) => (
+            {stats(progress.earned, progress.missions, trust.points).map((s) => (
               <div key={s.label} className="flex justify-between">
                 <span>{s.label}</span>
                 <span style={{ color: "var(--gold)" }}>{s.value}</span>

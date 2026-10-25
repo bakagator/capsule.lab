@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { QuizQuestion } from "@/lib/papa/data";
 import type { Monster } from "@/lib/papa/rpg";
 import { play } from "@/lib/papa/sfx";
-import { currentHp, levelInfo, maxHp, type ProgressApi } from "@/lib/papa/useProgress";
+import { currentHp, hpMax, levelInfo, type ProgressApi } from "@/lib/papa/useProgress";
 import { Cmd, Gauge, HpGauge, Message, Win } from "./ui";
 
 export type Encounter = { question: QuizQuestion; monster: Monster };
@@ -152,7 +152,7 @@ export default function Battle({
           <span>{hero}</span>
           <span style={{ color: "var(--text-muted)" }}>Lv {level}</span>
         </div>
-        <HpGauge hp={hp} max={maxHp(level)} />
+        <HpGauge hp={hp} max={hpMax(api.progress)} />
       </Win>
 
       {phase === "command" ? (

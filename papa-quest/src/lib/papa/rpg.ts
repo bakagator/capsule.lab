@@ -31,7 +31,7 @@ export const LESSON_MONSTERS: Record<string, Monster> = {
 };
 
 export type Place = {
-  id: "castle" | "temple" | "road" | "cave" | "workshop" | "home";
+  id: "castle" | "temple" | "road" | "cave" | "workshop" | "home" | "town" | "spring" | "tower";
   name: string;
   sprite: string;
   x: number; // マップ上の位置（%）
@@ -40,12 +40,15 @@ export type Place = {
 };
 
 export const PLACES: Place[] = [
-  { id: "home", name: "はじまりの家", sprite: "🏠", x: 18, y: 80, desc: "つよさを見る・やすむ" },
-  { id: "castle", name: "ママの城", sprite: "🏰", x: 72, y: 16, desc: "気遣いの まものたちに いどもう" },
-  { id: "temple", name: "学びの神殿", sprite: "🏛️", x: 22, y: 30, desc: "けんじゃに 育児の わざを まなぶ" },
-  { id: "road", name: "時の街道", sprite: "🛤️", x: 50, y: 52, desc: "妊娠初期から1歳までの 旅" },
-  { id: "cave", name: "ゲップの洞窟", sprite: "🕳️", x: 80, y: 64, desc: "ガスゴーストを しずめろ" },
-  { id: "workshop", name: "ミルク錬金工房", sprite: "⚗️", x: 46, y: 86, desc: "かんぺきな ミルクを れんせいせよ" },
+  { id: "home", name: "はじまりの家", sprite: "🏠", x: 15, y: 86, desc: "つよさを見る・やすむ" },
+  { id: "spring", name: "きずなの泉", sprite: "⛲", x: 76, y: 39, desc: "ママへの かんしゃを きろくして しんらいを たかめる" },
+  { id: "town", name: "はじまりの町", sprite: "🏘️", x: 22, y: 60, desc: "やくしょ・しんりょうじょ・どうぐや" },
+  { id: "castle", name: "ママの城", sprite: "🏰", x: 78, y: 13, desc: "気遣いの まものたちに いどもう" },
+  { id: "temple", name: "学びの神殿", sprite: "🏛️", x: 17, y: 28, desc: "けんじゃに 育児の わざを まなぶ" },
+  { id: "road", name: "時の街道", sprite: "🛤️", x: 48, y: 50, desc: "妊娠初期から1歳までの 旅" },
+  { id: "tower", name: "ゆめの塔", sprite: "🗼", x: 46, y: 13, desc: "かぞくで やりたいことリスト" },
+  { id: "cave", name: "ゲップの洞窟", sprite: "🕳️", x: 84, y: 66, desc: "ガスゴーストを しずめろ" },
+  { id: "workshop", name: "ミルク錬金工房", sprite: "⚗️", x: 54, y: 85, desc: "かんぺきな ミルクを れんせいせよ" },
 ];
 
 export type Item = { slot: string; name: string; sprite: string; got: boolean; hint: string };
@@ -71,15 +74,18 @@ export function equipment(e: Earned): Item[] {
   ];
 }
 
-export function treasures(e: Earned): Item[] {
+export function treasures(e: Earned, trustRankIdx: number, wishesDone: number): Item[] {
   return [
+    { slot: "", name: "じんつうバッグ", sprite: "🎒", got: has(e, "bag-clear"), hint: "どうぐやで にもつを そろえる" },
+    { slot: "", name: "きずなの ペンダント", sprite: "📿", got: trustRankIdx >= 2, hint: "ママの しんらいを「あいぼう」まで あげる" },
+    { slot: "", name: "ゆめの ちず", sprite: "🗺️", got: wishesDone >= 3, hint: "やりたいことを 3つ かなえる" },
     { slot: "", name: "やさしいて", sprite: "🤲", got: has(e, "burp-gentle"), hint: "一度も つよくたたかずに ゲップ" },
     { slot: "", name: "ミルクしょくにんの あかし", sprite: "👨‍🍳", got: has(e, "milk-perfect"), hint: "ノーミスで ミルクを つくる" },
     { slot: "", name: "1さいの バースデーケーキ", sprite: "🎂", got: monthsCleared(e) === MONTHS.length, hint: "時の街道を さいごまで" },
   ];
 }
 
-export function stats(e: Earned, missions: Record<string, boolean>) {
+export function stats(e: Earned, missions: Record<string, boolean>, trust: number) {
   const careWins = Object.keys(CARE_MONSTERS).filter((id) => has(e, id)).length;
   const lessonPts = LESSONS.reduce(
     (n, l) => n + (has(e, `${l.id}-read`) ? 1 : 0) + (has(e, l.quiz.id) ? 1 : 0),
@@ -94,5 +100,6 @@ export function stats(e: Earned, missions: Record<string, boolean>) {
     { label: "ちしき", value: 5 + lessonPts * 4 },
     { label: "じゅんび", value: 5 + missionCount * 2 },
     { label: "わざ", value: 5 + skill * 20 },
+    { label: "しんらい", value: trust },
   ];
 }
