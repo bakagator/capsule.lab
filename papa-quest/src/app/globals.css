@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #F6F9FD;
+  --surface: #FFFFFF;
+  --surface-2: #EEF2F7;
+  --accent: #C4846E;
+  --text: #1A1E26;
+  --text-muted: #8A93A3;
+  --border: #E2E8F0;
+  --wife: #E8799A;
+  --wife-bg: #FFF0F5;
+  --papa: #5B86C5;
+  --papa-bg: #EAF1FB;
+  --good: #3FA672;
+  --good-bg: #EAF7F0;
+  --bad: #E0664F;
+  --bad-bg: #FDEEEA;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
+    Meiryo, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.25s ease forwards; }
+
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.pop-in { animation: popIn 0.15s ease forwards; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.shake { animation: shake 0.35s ease; }
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+.wobble { animation: wobble 1.6s ease-in-out infinite; display: inline-block; }

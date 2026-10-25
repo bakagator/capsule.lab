@@ -14,12 +14,6 @@
   --husband: #7A9FCE;
   --wife-bg: #FFF0F5;
   --husband-bg: #F0F5FF;
-  --papa: #5B86C5;
-  --papa-bg: #EAF1FB;
-  --good: #3FA672;
-  --good-bg: #EAF7F0;
-  --bad: #E0664F;
-  --bad-bg: #FDEEEA;
 }
 
 * {
@@ -54,16 +48,3 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 .pop-in { animation: popIn 0.15s ease forwards; }
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-6px); }
-  40%, 80% { transform: translateX(6px); }
-}
-.shake { animation: shake 0.35s ease; }
-
-@keyframes wobble {
-  0%, 100% { transform: rotate(-4deg); }
-  50% { transform: rotate(4deg); }
-}
-.wobble { animation: wobble 1.6s ease-in-out infinite; display: inline-block; }

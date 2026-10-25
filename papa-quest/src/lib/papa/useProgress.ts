@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { LEVEL_TITLES, XP_PER_LEVEL } from "./data";
 
-const STORAGE_KEY = "matsuda_papa_quest";
+const STORAGE_KEY = "papa_quest";
 
 export type Progress = {
   xp: number;
