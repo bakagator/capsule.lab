@@ -3,11 +3,12 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "パパクエスト",
-  description: "子育てパパのための、ゲームで学ぶ育児準備アプリ",
+  description: "子育てパパのための、RPGで学ぶ育児準備アプリ",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#5B86C5",
+  themeColor: "#0B1022",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -17,22 +18,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className="min-h-screen flex flex-col">
-        <header
-          className="fixed top-0 left-0 right-0 z-40 flex items-center justify-center px-6 py-4"
-          style={{
-            background: "rgba(246, 249, 253, 0.92)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            borderBottom: "1px solid var(--border)",
-          }}
-        >
-          <span style={{ fontSize: "18px" }}>👨‍🍼</span>
-          <span className="ml-2 font-bold tracking-wide" style={{ fontSize: "17px" }}>
-            パパクエスト
-          </span>
-        </header>
-        <main className="flex-1 pt-16">{children}</main>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" />
+      </head>
+      <body
+        className="min-h-screen"
+        style={{
+          paddingLeft: "max(16px, env(safe-area-inset-left, 0px))",
+          paddingRight: "max(16px, env(safe-area-inset-right, 0px))",
+        }}
+      >
+        <main>{children}</main>
       </body>
     </html>
   );

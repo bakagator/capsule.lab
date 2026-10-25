@@ -2,124 +2,150 @@
 
 import { useState } from "react";
 import { LESSONS, type Lesson } from "@/lib/papa/data";
+import { LESSON_MONSTERS } from "@/lib/papa/rpg";
 import type { ProgressApi } from "@/lib/papa/useProgress";
-import QuizRunner from "./QuizRunner";
-import { BackBar, Card, PrimaryButton } from "./ui";
+import Battle from "./Battle";
+import { Btn, Cmd, Message, TopBar, Win } from "./ui";
+
+type Phase = "lecture" | "ready" | "battle" | "done";
 
 export default function ClassQuest({ api, onBack }: { api: ProgressApi; onBack: () => void }) {
   const [lesson, setLesson] = useState<Lesson | null>(null);
-  const [step, setStep] = useState<"read" | "quiz" | "done">("read");
+  const [phase, setPhase] = useState<Phase>("lecture");
+  const [round, setRound] = useState(0);
   const earned = api.progress.earned;
-
-  function open(l: Lesson) {
-    setLesson(l);
-    setStep("read");
-  }
+  const hero = api.progress.name || "パパ";
 
   if (!lesson) {
     const cleared = LESSONS.filter((l) => earned[`${l.id}-clear`] !== undefined).length;
     return (
       <div>
-        <BackBar title="🎓 両親学級オンライン" onBack={onBack} />
-        <Card className="mb-3" style={{ background: "var(--papa-bg)" }}>
-          <p className="text-sm leading-relaxed">
-            自宅で受けられるパパ向け両親学級。レッスンを読んで、確認テストに合格すると修了スタンプがもらえます。
-          </p>
-          <div className="text-xs font-bold mt-2" style={{ color: "var(--papa)" }}>
-            修了 {cleared} / {LESSONS.length}
+        <TopBar title="🏛️ 学びの神殿" onBack={onBack} />
+        <div className="fade-in flex flex-col gap-3">
+          <div className="text-center" style={{ fontSize: 64, lineHeight: 1.1 }}>
+            🧙
           </div>
-        </Card>
-        <div className="grid grid-cols-2 gap-3">
-          {LESSONS.map((l, i) => {
-            const done = earned[`${l.id}-clear`] !== undefined;
-            return (
-              <button
-                key={l.id}
-                onClick={() => open(l)}
-                className="relative rounded-2xl p-4 text-left transition-transform active:scale-95"
-                style={{
-                  background: "var(--surface)",
-                  border: `2px solid ${done ? "var(--good)" : "var(--border)"}`,
-                  cursor: "pointer",
-                }}
-              >
-                <div className="text-3xl mb-1">{l.emoji}</div>
-                <div className="text-xs" style={{ color: "var(--text-muted)" }}>
-                  第{i + 1}回
-                </div>
-                <div className="text-sm font-bold">{l.title}</div>
-                {done && (
-                  <span
-                    className="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-bold"
-                    style={{ background: "var(--good)", color: "#fff", transform: "rotate(8deg)" }}
-                  >
-                    修了
+          <Message
+            speaker="けんじゃ"
+            lines={[
+              `ほっほっ。${hero}よ、よく きたな。\nここは パパの ための りょうしん学級じゃ。`,
+              "6つの へやで わざを まなび、\nしれんの まものを たおせば\nしゅうりょうの あかしを さずけよう。",
+            ]}
+          />
+          <Win style={{ padding: "8px 10px" }}>
+            <div className="flex justify-between text-xs px-1.5 mb-1" style={{ color: "var(--text-muted)" }}>
+              <span>どの へやに はいる？</span>
+              <span>
+                あかし {cleared}/{LESSONS.length}
+              </span>
+            </div>
+            {LESSONS.map((l, i) => {
+              const done = earned[`${l.id}-clear`] !== undefined;
+              return (
+                <Cmd
+                  key={l.id}
+                  onClick={() => {
+                    setLesson(l);
+                    setPhase("lecture");
+                  }}
+                >
+                  <span className="flex items-center justify-between gap-2 text-sm">
+                    <span>
+                      {l.emoji} だい{i + 1}のへや：{l.title}
+                    </span>
+                    {done && <span style={{ color: "var(--gold)" }}>★</span>}
                   </span>
-                )}
-              </button>
-            );
-          })}
+                </Cmd>
+              );
+            })}
+          </Win>
         </div>
       </div>
     );
   }
 
+  const monster = LESSON_MONSTERS[lesson.quiz.id];
+
   return (
     <div>
-      <BackBar title={`${lesson.emoji} ${lesson.title}`} onBack={() => setLesson(null)} />
-      {step === "read" && (
-        <div className="fade-in">
-          <Card className="mb-3">
-            <div className="text-xs font-bold mb-2" style={{ color: "var(--papa)" }}>
-              📖 レッスン
-            </div>
-            <ol className="flex flex-col gap-2">
-              {lesson.points.map((p, i) => (
-                <li key={i} className="flex gap-2 text-sm leading-relaxed">
-                  <span
-                    className="shrink-0 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold"
-                    style={{ background: "var(--papa-bg)", color: "var(--papa)" }}
-                  >
-                    {i + 1}
-                  </span>
-                  <span>{p}</span>
-                </li>
-              ))}
-            </ol>
-          </Card>
-          <div className="text-center">
-            <PrimaryButton
-              onClick={() => {
-                api.award(`${lesson.id}-read`, 10);
-                setStep("quiz");
-              }}
-            >
-              確認テストへ ✏️
-            </PrimaryButton>
+      <TopBar title={`${lesson.emoji} ${lesson.title}のへや`} onBack={() => setLesson(null)} backLabel="神殿へ" />
+
+      {(phase === "lecture" || phase === "ready") && (
+        <div className="fade-in flex flex-col gap-3">
+          <div className="text-center" style={{ fontSize: 56, lineHeight: 1.1 }}>
+            🧙
           </div>
+          <Message
+            speaker="けんじゃ"
+            lines={[
+              `では「${lesson.title}」の わざを さずけよう。`,
+              ...lesson.points.map((p, i) => `その${i + 1}。\n${p}`),
+              `わかったかの？\nでは しれんじゃ！ ${monster.name}を たおしてみよ！`,
+            ]}
+            onDone={() => {
+              api.award(`${lesson.id}-read`, 10);
+              setPhase("ready");
+            }}
+          />
+          {phase === "ready" && (
+            <>
+              <Win style={{ padding: "10px 14px" }}>
+                <div className="text-xs mb-1" style={{ color: "var(--gold)" }}>
+                  📜 まなんだ わざ
+                </div>
+                <ul className="text-xs leading-relaxed flex flex-col gap-1">
+                  {lesson.points.map((p, i) => (
+                    <li key={i}>・{p}</li>
+                  ))}
+                </ul>
+              </Win>
+              <div className="pop-in flex justify-center">
+                <Btn
+                  gold
+                  onClick={() => {
+                    setRound((r) => r + 1);
+                    setPhase("battle");
+                  }}
+                >
+                  ⚔ しれんに いどむ
+                </Btn>
+              </div>
+            </>
+          )}
         </div>
       )}
-      {step === "quiz" && (
-        <QuizRunner
-          questions={[lesson.quiz]}
-          xpPerCorrect={20}
-          onAward={api.award}
-          finishLabel="修了する 🎓"
-          onFinish={() => {
+
+      {phase === "battle" && (
+        <Battle
+          key={round}
+          encounters={[{ question: lesson.quiz, monster }]}
+          api={api}
+          xpPerWin={20}
+          onClear={() => {
             api.award(`${lesson.id}-clear`, 0);
-            setStep("done");
+            setPhase("done");
           }}
         />
       )}
-      {step === "done" && (
-        <Card className="pop-in text-center">
-          <div className="text-6xl mb-2">🎓</div>
-          <div className="font-bold mb-1">「{lesson.title}」修了！</div>
-          <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
-            実際にやるときは、ママや助産師さんと一緒に練習するとさらに安心です。
-          </p>
-          <PrimaryButton onClick={() => setLesson(null)}>レッスン一覧へ</PrimaryButton>
-        </Card>
+
+      {phase === "done" && (
+        <div className="fade-in flex flex-col gap-3">
+          <div className="text-center" style={{ fontSize: 64, lineHeight: 1.1 }}>
+            📜
+          </div>
+          <Message
+            speaker="けんじゃ"
+            lines={[
+              `みごとじゃ！\n「${lesson.title}」の しゅうりょうの あかしを さずけよう。`,
+              "ほんばんの まえには ママや じょさんしさんと\nいっしょに れんしゅうすると あんしんじゃぞ。",
+            ]}
+          />
+          <div className="flex justify-center">
+            <Btn gold onClick={() => setLesson(null)}>
+              神殿へ もどる
+            </Btn>
+          </div>
+        </div>
       )}
     </div>
   );
