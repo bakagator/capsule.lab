@@ -22,13 +22,22 @@ export function levelInfo(xp: number) {
   return { level, title: LEVEL_TITLES[level - 1], into, isMax };
 }
 
-// localStorage を外部ストアとして扱う
+// localStorage を外部ストアとして扱う（使えない環境ではメモリに保持）
 const listeners = new Set<() => void>();
+let memoryRaw: string | null = null;
 let cachedRaw: string | null | undefined;
 let cached: Progress = EMPTY;
 
+function loadRaw(): string | null {
+  try {
+    return localStorage.getItem(STORAGE_KEY) ?? memoryRaw;
+  } catch {
+    return memoryRaw;
+  }
+}
+
 function read(): Progress {
-  const raw = localStorage.getItem(STORAGE_KEY);
+  const raw = loadRaw();
   if (raw !== cachedRaw) {
     cachedRaw = raw;
     try {
@@ -41,7 +50,12 @@ function read(): Progress {
 }
 
 function write(next: Progress) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  memoryRaw = JSON.stringify(next);
+  try {
+    localStorage.setItem(STORAGE_KEY, memoryRaw);
+  } catch {
+    // プライベートモードなどで保存できない場合はメモリのみ
+  }
   listeners.forEach((l) => l());
 }
 

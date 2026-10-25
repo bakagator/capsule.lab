@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LESSONS, MONTHS, XP_PER_LEVEL } from "@/lib/papa/data";
 import { levelInfo, useProgress } from "@/lib/papa/useProgress";
 import BurpGame from "./BurpGame";
@@ -15,6 +15,13 @@ type Screen = "hub" | "care" | "month" | "class" | "burp" | "milk";
 export default function PapaQuest() {
   const api = useProgress();
   const [screen, setScreen] = useState<Screen>("hub");
+  const [confirmReset, setConfirmReset] = useState(false);
+
+  useEffect(() => {
+    if (!confirmReset) return;
+    const t = setTimeout(() => setConfirmReset(false), 4000);
+    return () => clearTimeout(t);
+  }, [confirmReset]);
   const { progress, loaded, toast } = api;
   const e = progress.earned;
   const has = (id: string) => e[id] !== undefined;
@@ -92,7 +99,7 @@ export default function PapaQuest() {
           <div
             key={toast}
             className="pop-in rounded-full px-5 py-2 text-sm font-bold shadow-lg"
-            style={{ background: "var(--text)", color: "#fff" }}
+            style={{ background: "var(--text)", color: "var(--bg)" }}
           >
             {toast}
           </div>
@@ -189,12 +196,17 @@ export default function PapaQuest() {
           <div className="text-center">
             <button
               onClick={() => {
-                if (confirm("進捗をリセットしますか？")) api.reset();
+                if (confirmReset) {
+                  api.reset();
+                  setConfirmReset(false);
+                } else {
+                  setConfirmReset(true);
+                }
               }}
               className="text-xs underline"
-              style={{ color: "var(--text-muted)", cursor: "pointer" }}
+              style={{ color: confirmReset ? "var(--bad)" : "var(--text-muted)", cursor: "pointer" }}
             >
-              進捗をリセット
+              {confirmReset ? "本当にリセットする？（もう一度タップ）" : "進捗をリセット"}
             </button>
           </div>
         </div>
