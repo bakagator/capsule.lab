@@ -48,3 +48,31 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 .pop-in { animation: popIn 0.15s ease forwards; }
+
+/* ── 経営学RPG ── */
+.rpg {
+  --rpg-window: #1f2442;
+  --rpg-window-2: #2b3157;
+  --rpg-window-border: #e9e1cf;
+  --rpg-on-window: #f6f2e9;
+  --rpg-on-window-muted: #b9b5c9;
+  --rpg-gold: #e8b84a;
+  --rpg-cash: #4fb985;
+  --rpg-mp: #6a9cf0;
+  --rpg-enemy: #e0675f;
+  --rpg-correct: #4fb985;
+  --rpg-wrong: #e0675f;
+}
+
+@keyframes rpgShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.rpg-shake { animation: rpgShake 0.3s ease; }
+
+@keyframes rpgFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.rpg-float { animation: rpgFloat 2.4s ease-in-out infinite; }
