@@ -11,17 +11,17 @@ import {
 const LIMIT = 280;
 const MIN = 60_000;
 const HOUR = 60 * MIN;
-const FOG_RETURN_HOURS = 24; // 吐き出してから霧が戻りきるまで
+const FOG_RETURN_HOURS = 24; // 書いてから霧が戻りきるまで
 const RING = 62.83;
-const HINT = "「残す」は記録に。「消す」は霧に溶かして手放す（保存されません）。";
+const HINT = "「残す」は記録に。「流す」は保存せず、空気に溶かすだけ。";
 
 const SAMPLES: Post[] = [
-  { id: "s1", text: "「全然大丈夫ですよ！」って言ったけど、全然大丈夫じゃない。定時5分前に頼むのやめて。", ts: 0, cleared: false },
-  { id: "s2", text: "なんか今日ずっと頭が重い。理由がわからないのが一番モヤモヤする。", ts: 0, cleared: false },
-  { id: "s3", text: "あの一言、気にしてたけど相手は覚えてもなかった。考えすぎてただけだった。", ts: 0, cleared: true },
+  { id: "s1", text: "「全然大丈夫です」って言ったけど、正直ちょっと多い。", ts: 0, cleared: false },
+  { id: "s2", text: "昼なに食べよう。いや、その前にあのメール返さないと。", ts: 0, cleared: false },
+  { id: "s3", text: "ずっと気になってた件、聞いてみたら一瞬で解決した。", ts: 0, cleared: true },
 ];
-const RELEASE_LINES = ["霧に溶けていきました。", "手放せました。少し軽くなった？", "もう、ここにはありません。"];
-const KEEP_LINES = ["吐き出せました。少し晴れたかも。", "ちゃんと残しました。えらい。", "言葉にできた分だけ、霧が薄くなりました。"];
+const RELEASE_LINES = ["流しました。", "独り言は空気に溶けました。", "言ったらおしまい、で大丈夫。"];
+const KEEP_LINES = ["置いておきました。", "頭の外に出せました。", "書いたら少し整理されたかも。"];
 
 const pick = (a: string[]) => a[Math.floor(Math.random() * a.length)];
 const count = (s: string) => [...s].length;
@@ -45,10 +45,10 @@ function fogLevel(posts: Post[], meta: Meta, now: number) {
 }
 
 function weatherLabel(lv: number) {
-  if (lv > 0.66) return "🌫 モヤモヤ濃いめ";
-  if (lv > 0.33) return "🌥 うっすら霧";
-  if (lv > 0.15) return "🌤 晴れてきた";
-  return "☀️ すっきり";
+  if (lv > 0.66) return "🌫 頭の中にぎやか";
+  if (lv > 0.33) return "🌥 ちょっと考えごと";
+  if (lv > 0.15) return "🌤 落ち着いてきた";
+  return "☀️ 頭すっきり";
 }
 
 const SunIcon = () => (
@@ -85,7 +85,7 @@ function PostItem({
         <div className="post-head">
           <b>マツダ</b>
           <span>@matsuda_honne · {sample ? "例" : ago(post.ts, now)}</span>
-          {post.cleared && <em className="badge sun">☀️ 晴れた</em>}
+          {post.cleared && <em className="badge sun">☀️ すっきり</em>}
           {sample && <em className="badge">サンプル</em>}
         </div>
         <p className="post-text">{post.text}</p>
@@ -93,14 +93,14 @@ function PostItem({
           <div className="post-bar">
             {confirming ? (
               <span className="confirm">
-                このホンネを消しますか？
+                この独り言を消しますか？
                 <button type="button" className="yes" onClick={onDelete}>消す</button>
                 <button type="button" className="no" onClick={onCancelDelete}>やめる</button>
               </span>
             ) : (
               <>
                 <button type="button" className="act sun" aria-pressed={post.cleared} onClick={onToggleClear}>
-                  <SunIcon /><span>{post.cleared ? "晴れた" : "晴れた？"}</span>
+                  <SunIcon /><span>{post.cleared ? "すっきり" : "すっきり？"}</span>
                 </button>
                 <button type="button" className="act" aria-label="テキストをコピー" onClick={onCopy}><CopyIcon /></button>
                 <button type="button" className="act del" aria-label="消す" onClick={onAskDelete}><TrashIcon /></button>
@@ -191,7 +191,7 @@ export default function HonneApp() {
   function toggleClear(id: string) {
     const target = posts.find((p) => p.id === id);
     if (!target) return;
-    if (!target.cleared) showToast("晴れてよかった ☀️");
+    if (!target.cleared) showToast("すっきりしてよかった ☀️");
     commitPosts(posts.map((p) => (p.id === id ? { ...p, cleared: !p.cleared } : p)));
   }
 
@@ -225,7 +225,7 @@ export default function HonneApp() {
     <div className="shell">
       <header className="topbar pad">
         <h1>マツダの『ホンネとタテマエ』</h1>
-        <p>{open.length} 件のモヤモヤ</p>
+        <p>{open.length} 件の独り言</p>
       </header>
 
       <section aria-label="プロフィール">
@@ -243,11 +243,11 @@ export default function HonneApp() {
             <h2>マツダ</h2>
             <div className="handle">@matsuda_honne</div>
           </div>
-          <p className="bio">タテマエは本人が持ってます。ここはモヤモヤを吐き出して、霧を晴らす場所。</p>
+          <p className="bio">タテマエは本人が持ってます。ここは頭の中の独り言を、そっと置いておく場所。</p>
           <div className="facts">
-            <span><b>{posts.length}</b> 吐き出した</span>
-            <span><b>{meta.released}</b> 手放した</span>
-            <span><b>{cleared.length}</b> 晴れた</span>
+            <span><b>{posts.length}</b> 独り言</span>
+            <span><b>{meta.released}</b> 流した</span>
+            <span><b>{cleared.length}</b> すっきり</span>
           </div>
         </div>
       </section>
@@ -268,8 +268,8 @@ export default function HonneApp() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); keep(); }
               }}
-              placeholder="モヤモヤ、ぜんぶ吐き出して"
-              aria-label="モヤモヤを書く"
+              placeholder="いま、頭の中でなんて言ってる？"
+              aria-label="独り言を書く"
             />
             {mists.map((m) => (
               <div key={m.id} className="mist" aria-hidden="true">{m.text}</div>
@@ -286,7 +286,7 @@ export default function HonneApp() {
                   strokeDasharray={RING} strokeDashoffset={RING * (1 - Math.min(n, LIMIT) / LIMIT)}
                 />
               </svg>
-              <button type="button" className="btn ghost" disabled={empty} onClick={release}>消す</button>
+              <button type="button" className="btn ghost" disabled={empty} onClick={release}>流す</button>
               <button type="submit" className="btn" disabled={empty || left < 0}>残す</button>
             </div>
           </div>
@@ -296,10 +296,10 @@ export default function HonneApp() {
 
       <div className="tabs" role="tablist" aria-label="表示">
         <button type="button" className="tab" role="tab" aria-selected={tab === "open"} onClick={() => { setTab("open"); setConfirmId(null); }}>
-          モヤモヤ中{posts.length > 0 && <small>{open.length}</small>}
+          独り言{posts.length > 0 && <small>{open.length}</small>}
         </button>
         <button type="button" className="tab" role="tab" aria-selected={tab === "cleared"} onClick={() => { setTab("cleared"); setConfirmId(null); }}>
-          晴れた{posts.length > 0 && <small>{cleared.length}</small>}
+          すっきり{posts.length > 0 && <small>{cleared.length}</small>}
         </button>
       </div>
 
@@ -308,19 +308,19 @@ export default function HonneApp() {
           <p className="empty pad">読み込んでいます…</p>
         ) : posts.length === 0 ? (
           <>
-            <p className="sample-note pad">まだ何もありません。下はサンプルです。上の欄にモヤモヤを書いて、残すか消すかを選んでください。</p>
+            <p className="sample-note pad">まだ何もありません。下はサンプルです。頭に浮かんだことを上の欄に書いて、残すか流すかを選んでください。</p>
             {samples.map((s) => <PostItem key={s.id} {...itemProps(s)} sample />)}
           </>
         ) : shown.length > 0 ? (
           shown.map((p) => <PostItem key={p.id} {...itemProps(p)} />)
         ) : tab === "cleared" ? (
-          <div className="empty pad"><b>まだ晴れたモヤモヤはありません</b>気持ちが落ち着いたホンネに ☀️ をつけると、ここに移ります。</div>
+          <div className="empty pad"><b>まだ「すっきり」はありません</b>片づいた独り言に ☀️ をつけると、ここに移ります。</div>
         ) : (
-          <div className="empty pad"><b>いまはモヤモヤなし ☀️</b>また何かあったら、上の欄に吐き出してください。</div>
+          <div className="empty pad"><b>いまは頭の中しずか ☀️</b>また何か浮かんだら、上の欄にどうぞ。</div>
         )}
       </div>
 
-      <p className="foot pad">ホンネはこのiPhone（ブラウザ）の中にだけ保存されます 🔒</p>
+      <p className="foot pad">独り言はこのiPhone（ブラウザ）の中にだけ保存されます 🔒</p>
     </div>
   );
 }

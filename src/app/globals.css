@@ -1,5 +1,5 @@
-/* 600px幅の1カラム。霧のかかったバナー（吐き出すと晴れる）→プロフィール→吐き出し欄→タブ→タイムライン。
-   色はイラストのインクとネイビー、「晴れた」だけ陽だまりの黄。 */
+/* 600px幅の1カラム。霧のかかったバナー（書くと晴れる）→プロフィール→書く欄→タブ→タイムライン。
+   色はイラストのインクとネイビー、「すっきり」だけ陽だまりの黄。 */
 :root {
   --bg: #FFFFFF;
   --bg-soft: #F5F6F8;
@@ -79,7 +79,7 @@ img { max-width: 100%; }
 .facts { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; font-size: 14px; color: var(--muted); }
 .facts b { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
 
-/* 吐き出し欄 */
+/* 書く欄 */
 .composer { display: flex; gap: 12px; padding-block: 14px; border-bottom: 1px solid var(--line); }
 .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: #FFFFFF; }
 .composer-main { flex: 1; min-width: 0; }

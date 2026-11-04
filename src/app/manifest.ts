@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "マツダの『ホンネとタテマエ』",
     short_name: "ホンネ",
-    description: "モヤモヤを吐き出して、霧を晴らす。マツダ専用のホンネ置き場。",
+    description: "頭の中の独り言を、そっと置いておく。マツダ専用のホンネ置き場。",
     start_url: "/",
     display: "standalone",
     background_color: "#FFFFFF",

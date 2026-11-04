@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "マツダの『ホンネとタテマエ』",
-  description: "モヤモヤを吐き出して、霧を晴らす。マツダ専用のホンネ置き場。",
+  description: "頭の中の独り言を、そっと置いておく。マツダ専用のホンネ置き場。",
   applicationName: "ホンネ",
   appleWebApp: {
     capable: true,

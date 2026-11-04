@@ -7,8 +7,8 @@ export type Post = {
 };
 
 export type Meta = {
-  released: number; // 「消す」で手放した回数（文章は保存しない）
-  lastVent: number; // 最後に吐き出した時刻
+  released: number; // 「流す」で流した回数（文章は保存しない）
+  lastVent: number; // 最後に書いた（残した・流した）時刻
 };
 
 const POSTS_KEY = "matsuda_honne_posts";
