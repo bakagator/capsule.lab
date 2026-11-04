@@ -1,5 +1,5 @@
-import HonneTatemaeApp from "@/components/HonneTatemaeApp";
+import HonneApp from "@/components/HonneApp";
 
 export default function Home() {
-  return <HonneTatemaeApp />;
+  return <HonneApp />;
 }
