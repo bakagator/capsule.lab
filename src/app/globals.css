@@ -1,50 +1,65 @@
 @import "tailwindcss";
 
+/* タテマエモード：明るく、きちんとした顔 */
+.app-root,
 :root {
-  --bg: #F9F5F0;
+  --bg: #F7F5F0;
+  --header-bg: rgba(247, 245, 240, 0.9);
   --surface: #FFFFFF;
-  --surface-2: #F3EDE8;
-  --primary: #D4648A;
-  --primary-light: #FAE8F0;
-  --accent: #C4846E;
-  --text: #1E1A1A;
-  --text-muted: #9A8F8F;
-  --border: #EDE5E0;
-  --wife: #E8799A;
-  --husband: #7A9FCE;
-  --wife-bg: #FFF0F5;
-  --husband-bg: #F0F5FF;
+  --surface-2: #F0EDE6;
+  --primary: #3E7CB1;
+  --on-primary: #FFFFFF;
+  --text: #1F2328;
+  --text-muted: #8A8F98;
+  --border: #E6E2DA;
+  --shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+  --tatemae-bg: #E8F1FA;
+  --tatemae-text: #1F3A56;
+  --honne-bg: #F4EFF7;
+  --honne-text: #6B4A80;
+  --honne-border: #CDB8DA;
+  --gap: #E0824B;
 }
 
-* {
-  box-sizing: border-box;
+/* ホンネモード：暗く、心の中 */
+.app-root[data-mode="honne"] {
+  --bg: #15121C;
+  --header-bg: rgba(21, 18, 28, 0.9);
+  --surface: #201B2A;
+  --surface-2: #2B2537;
+  --primary: #C04E7A;
+  --on-primary: #FFFFFF;
+  --text: #F1ECF5;
+  --text-muted: #9C92A8;
+  --border: #352E42;
+  --shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  --tatemae-bg: #2B2537;
+  --tatemae-text: #B9B1C4;
+  --honne-bg: #3A1F33;
+  --honne-text: #FFD2E4;
+  --honne-border: #7A3A5C;
+  --gap: #FF6B8B;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+* { box-sizing: border-box; }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
+  margin: 0;
+  background: #F7F5F0;
   font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
     Meiryo, -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 2px; }
+.app-root {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.4s ease, color 0.4s ease;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .fade-in { animation: fadeIn 0.25s ease forwards; }
-
-@keyframes popIn {
-  0% { opacity: 0; transform: scale(0.85); }
-  100% { opacity: 1; transform: scale(1); }
-}
-.pop-in { animation: popIn 0.15s ease forwards; }

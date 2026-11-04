@@ -1,9 +1,14 @@
-export type Author = "妻" | "夫";
+export type Scene = "仕事" | "家族" | "友達" | "ひとり" | "その他";
 
-export type Tsubuyaki = {
+export const SCENES: Scene[] = ["仕事", "家族", "友達", "ひとり", "その他"];
+
+export type Hitorigoto = {
   id: string;
-  author: Author;
-  text: string;
+  tatemae: string;
+  honne: string;
+  scene: Scene;
+  gap: number; // 1〜5 ギャップ度
   timestamp: string;
-  reactions: Record<string, Author[]>;
 };
+
+export type Mode = "tatemae" | "honne";

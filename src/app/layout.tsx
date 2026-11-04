@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "まつだ家",
-  description: "まつだ家のふたりのスペース",
+  title: "マツダの『ホンネとタテマエ』",
+  description: "松田の独り言アプリ。口に出したタテマエと、心の中のホンネを記録する。",
 };
 
 export default function RootLayout({
@@ -14,10 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 pt-16">{children}</main>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

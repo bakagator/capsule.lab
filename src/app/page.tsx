@@ -1,5 +1,5 @@
-import TsubuyakiBoard from "@/components/TsubuyakiBoard";
+import HonneTatemaeApp from "@/components/HonneTatemaeApp";
 
 export default function Home() {
-  return <TsubuyakiBoard />;
+  return <HonneTatemaeApp />;
 }
