@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Header from "@/components/Header";
+import Hero from "@/components/Hero";
 import { useHitorigoto } from "@/lib/useHitorigoto";
 import { SCENES, type Hitorigoto, type Mode, type Scene } from "@/lib/types";
 
@@ -266,25 +267,11 @@ export default function HonneTatemaeApp() {
       <Header mode={mode} onModeChange={setMode} />
 
       <main className="max-w-lg mx-auto px-4 py-6">
-        <section className="text-center mb-5">
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-            {mode === "tatemae"
-              ? "今日もいい人でいられました。"
-              : "ここだけの話、ぜんぶ聞いて。"}
-          </p>
-          <div className="flex justify-center gap-6 mt-3">
-            <div>
-              <p className="text-xl font-bold" style={{ color: "var(--text)" }}>{items.length}</p>
-              <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>ひとりごと</p>
-            </div>
-            <div>
-              <p className="text-xl font-bold" style={{ color: "var(--text)" }}>{avgGap.toFixed(1)}</p>
-              <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>平均ギャップ度</p>
-            </div>
-          </div>
-        </section>
+        <Hero mode={mode} latest={items[0]} count={items.length} avgGap={avgGap} />
 
-        <Composer onSubmit={add} />
+        <div className="mt-4">
+          <Composer onSubmit={add} />
+        </div>
 
         <div className="flex gap-1.5 mt-5 overflow-x-auto pb-1 -mx-4 px-4">
           {(["すべて", ...SCENES] as const).map((s) => (
